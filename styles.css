@@ -6,6 +6,7 @@
   --color-border: #dce7e2;
   --color-accent: #287d70;
   --color-accent-dark: #1e6258;
+  --color-on-accent: #fff;
   --color-danger: #b45b55;
   --color-shadow: rgba(42, 73, 65, 0.14);
   --radius-card: 24px;
@@ -116,6 +117,33 @@ h1 {
 
 .todo-form button:active {
   transform: translateY(1px);
+}
+.todo-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.filter-button {
+  padding: 7px 11px;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-family: "Trebuchet MS", sans-serif;
+  font-size: 0.85rem;
+}
+
+.filter-button:hover,
+.filter-button:focus-visible {
+  color: var(--color-ink);
+  border-color: var(--color-accent);
+}
+
+.filter-button.is-active {
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .todo-section {

@@ -6,8 +6,10 @@ const todoList = document.querySelector("#todo-list");
 const emptyState = document.querySelector("#empty-state");
 const remainingCount = document.querySelector("#remaining-count");
 const clearCompletedButton = document.querySelector("#clear-completed");
+const filterButtons = document.querySelectorAll("[data-filter]");
 
 let todos = loadTodos();
+let activeFilter = "all";
 
 // 從瀏覽器儲存空間讀取待辦資料，資料損壞時回到空清單。
 function loadTodos() {
@@ -28,11 +30,36 @@ function updateClearCompletedButton() {
   clearCompletedButton.disabled = !hasCompletedTodos;
 }
 
+function getVisibleTodos() {
+  if (activeFilter === "active") {
+    return todos.filter((todo) => !todo.completed);
+  }
+
+  if (activeFilter === "completed") {
+    return todos.filter((todo) => todo.completed);
+  }
+
+  return todos;
+}
+
+function updateEmptyState(visibleTodos) {
+  if (todos.length === 0) {
+    emptyState.textContent = "還沒有任何待辦事項，新增一個吧!";
+  } else if (visibleTodos.length === 0 && activeFilter === "completed") {
+    emptyState.textContent = "目前沒有已完成的事項";
+  } else if (visibleTodos.length === 0 && activeFilter === "active") {
+    emptyState.textContent = "目前沒有未完成的事項";
+  }
+
+  emptyState.hidden = visibleTodos.length > 0;
+}
+
 function renderTodos() {
   todoList.replaceChildren();
-  emptyState.hidden = todos.length > 0;
+  const visibleTodos = getVisibleTodos();
+  updateEmptyState(visibleTodos);
 
-  todos.forEach((todo) => {
+  visibleTodos.forEach((todo) => {
     const listItem = document.createElement("li");
     listItem.className = "todo-item";
     listItem.classList.toggle("completed", todo.completed);
@@ -80,6 +107,18 @@ clearCompletedButton.addEventListener("click", () => {
   todos = todos.filter((todo) => !todo.completed);
   saveTodos();
   renderTodos();
+});
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeFilter = button.dataset.filter;
+    filterButtons.forEach((filterButton) => {
+      const isActive = filterButton === button;
+      filterButton.classList.toggle("is-active", isActive);
+      filterButton.setAttribute("aria-pressed", String(isActive));
+    });
+    renderTodos();
+  });
 });
 
 todoForm.addEventListener("submit", (event) => {
